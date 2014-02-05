@@ -1,0 +1,7 @@
+parameters:
+#    etv_admin.example.class: Etv\AdminBundle\Example
+
+services:
+#    etv_admin.example:
+#        class: %etv_admin.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

@@ -1,0 +1,21 @@
+{
+    "name": "etv/admin-bundle",
+    "type": "symfony-bundle",
+    "description": "Etv Admin Bundle",
+    "keywords": ["library", "test", "admin", "etv"],
+    "homepage": "https://github.com/bpec/etv-admin",
+    "autoload": {
+        "psr-0": {"Etv\\AdminBundle": ""}
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "symfony/framework-bundle": ">=2.0.0",
+        "sonata-project/admin-bundle" : "*",
+        "doctrine/doctrine-migrations-bundle": "dev-master",
+        "gedmo/doctrine-extensions": "dev-master",
+        "stof/doctrine-extensions-bundle": "dev-master",
+        "sonata-project/doctrine-orm-admin-bundle" : "dev-master",
+        "friendsofsymfony/user-bundle": "dev-master"
+    },
+    "minimum-stability": "dev"
+}

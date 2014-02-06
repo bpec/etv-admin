@@ -1,3 +1,8 @@
 etv_admin_homepage:
     path:  /hello/{name}
     defaults: { _controller: EtvAdminBundle:Default:index }
+login:
+    path:     /login
+    defaults: { _controller: EtvAdminBundle:Security:login }
+login_check:
+    path: /login_check

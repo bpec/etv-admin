@@ -46,7 +46,13 @@ class EtvUser
  */
     protected $email;
 
+/**
+ * @ORM\Column(type="string", length=255, nullable=false)
+ */
+    protected $password;
 
+
+    
     /**
      * Get id
      *
@@ -199,5 +205,40 @@ class EtvUser
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     *
+     * @return EtvUser
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Get password
+     *
+     * @return string 
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Get salt from password
+     *
+     * @return string 
+     */
+    public function getSalt()
+    {
+        $salt = substr($this->password, -32);
+        return $salt;
     }
 }

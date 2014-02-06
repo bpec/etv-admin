@@ -14,10 +14,10 @@ class EtvUserAdmin extends Admin
     {
         $formMapper
             ->add('username', 'text', array('label' => 'User name'))
-            
             ->add('firstName', 'text', array('label' => 'First name'))
-        //   ->add('lastname', 'text', array('label' => 'Last name'))
-           //->add('lastname', 'text', array('label' => 'Last name'))
+            ->add('lastName', 'text', array('label' => 'Last name'))
+            ->add('email', 'text', array('label' => 'E-mail'))
+            ->add('password', 'password', array('label' => 'Password'))
         ;
     }
 
@@ -28,6 +28,7 @@ class EtvUserAdmin extends Admin
             ->add('username')
             ->add('firstName')
             ->add('lastName')
+            ->add('email')
         ;
     }
 
@@ -38,8 +39,29 @@ class EtvUserAdmin extends Admin
             ->addIdentifier('username')
             ->add('firstName')
             ->add('lastName')
+            ->add('email')
             //->add('created_at','datetime')
            // ->add('modify_at','datetime')
            ;
+    }
+    
+    
+    public function prePersist($object) {
+        $uniqid = $this->getRequest()->query->get('uniqid');
+        $formData = $this->getRequest()->request->get($uniqid);
+        if(array_key_exists('password', $formData) && $formData['password'] !== null && strlen($formData['password']) > 0) {
+            $salt = md5(rand());
+            $object->setPassword(md5(md5($formData['password']).$salt).$salt);
+        }
+    }
+    
+    public function preUpdate($object) {
+        var_dump('itt'); 
+        die();
+        $uniqid = $this->getRequest()->query->get('uniqid');
+        $formData = $this->getRequest()->request->get($uniqid);
+        if(array_key_exists('password', $formData) && $formData['password'] !== null && strlen($formData['password']) > 0) {
+            $object->setPassword(sha1($formData['password']));
+        }
     }
 }

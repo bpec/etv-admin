@@ -1,7 +1,6 @@
 parameters:
-#    etv_admin.example.class: Etv\AdminBundle\Example
+    webservice_admin_user_provider.class: Etv\AdminBundle\Security\User\AdminWebserviceUserProvider
 
 services:
-#    etv_admin.example:
-#        class: %etv_admin.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    webservice_user_provider:
+        class: "%webservice_admin_user_provider.class%"

@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="etv_user")
  */
-class EtvUser
+class User
 {
     
 /**
@@ -68,7 +68,7 @@ class EtvUser
      *
      * @param string $username
      *
-     * @return EtvUser
+     * @return User
      */
     public function setUsername($username)
     {
@@ -92,7 +92,7 @@ class EtvUser
      *
      * @param string $firstName
      *
-     * @return EtvUser
+     * @return User
      */
     public function setFirstName($firstName)
     {
@@ -116,7 +116,7 @@ class EtvUser
      *
      * @param string $lastName
      *
-     * @return EtvUser
+     * @return User
      */
     public function setLastName($lastName)
     {
@@ -140,7 +140,7 @@ class EtvUser
      *
      * @param \DateTime $dateOfBirth
      *
-     * @return EtvUser
+     * @return User
      */
     public function setDateOfBirth($dateOfBirth)
     {
@@ -164,7 +164,7 @@ class EtvUser
      *
      * @param boolean $active
      *
-     * @return EtvUser
+     * @return User
      */
     public function setActive($active)
     {
@@ -188,7 +188,7 @@ class EtvUser
      *
      * @param string $email
      *
-     * @return EtvUser
+     * @return User
      */
     public function setEmail($email)
     {
@@ -212,7 +212,7 @@ class EtvUser
      *
      * @param string $password
      *
-     * @return EtvUser
+     * @return User
      */
     public function setPassword($password)
     {

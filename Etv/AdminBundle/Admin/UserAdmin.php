@@ -1,5 +1,5 @@
 <?php
-// vendor/etv/admin-bundle/Etv/AdminBundle/Admin/EtvUserAdmin.php
+// vendor/etv/admin-bundle/Etv/AdminBundle/Admin/UserAdmin.php
 
 namespace Etv\AdminBundle\Admin;
 use Sonata\AdminBundle\Admin\Admin;
@@ -7,7 +7,7 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
-class EtvUserAdmin extends Admin
+class UserAdmin extends Admin
 {
     // Fields to be shown on create/edit forms
     protected function configureFormFields(FormMapper $formMapper)
@@ -56,6 +56,7 @@ class EtvUserAdmin extends Admin
             ->add('firstName')
             ->add('lastName')
             ->add('email')
+            ->add('active')
             //->add('created_at','datetime')
            // ->add('modify_at','datetime')
            ;
@@ -81,15 +82,8 @@ class EtvUserAdmin extends Admin
         $uniqid = $this->getRequest()->query->get('uniqid');
         $formData = $this->getRequest()->request->get($uniqid);
         if(array_key_exists('password', $formData) && $formData['password'] !== null && strlen($formData['password']) > 0) {
-            //var_dump($formData['password']);            die();
             $salt = md5(rand());
             $object->setPassword(md5(md5($formData['password']).$salt).$salt);
-        } else {
-            /*
-            unset($formData['password']);
-            $repository = $this->getDoctrine()->getRepository('EtvAdminBundle:EtvUser');
-            $etvUser  = $repository->find($this->getSubject()->getId());
-            var_dump($etvUser);die();*/
         }
     }
     

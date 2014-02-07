@@ -1,12 +1,12 @@
 # Etv/AdminBundle/Resources/config/admin.yml
 services:
     sonata.admin.etv_user:
-        class: Etv\AdminBundle\Admin\EtvUserAdmin
+        class: Etv\AdminBundle\Admin\UserAdmin
         tags:
-            - { name: sonata.admin, manager_type: orm, group: "Content", label: "EtvUser" }
+            - { name: sonata.admin, manager_type: orm, group: "Content", label: "User" }
         arguments:
             - ~
-            - Etv\AdminBundle\Entity\EtvUser
+            - Etv\AdminBundle\Entity\User
             - ~
 #        calls:
 #            - [ setTranslationDomain, [AcmeDemoBundle]]

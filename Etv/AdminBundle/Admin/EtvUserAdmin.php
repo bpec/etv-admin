@@ -12,13 +12,29 @@ class EtvUserAdmin extends Admin
     // Fields to be shown on create/edit forms
     protected function configureFormFields(FormMapper $formMapper)
     {
+        $edit = false;
+        if ($this->getSubject()->getId() > 0) {
+             $edit = true;
+        }
         $formMapper
             ->add('username', 'text', array('label' => 'User name'))
             ->add('firstName', 'text', array('label' => 'First name'))
             ->add('lastName', 'text', array('label' => 'Last name'))
             ->add('email', 'text', array('label' => 'E-mail'))
-            ->add('password', 'password', array('label' => 'Password'))
+            ->add('password', 'password', array('label' => 'Password', 'required' => ($edit) ? false : true))
+            ->add('active', 'checkbox', array('label' => 'Is active?', 'required' => false))
         ;
+        if ($edit) {
+            $uniqid = $this->getRequest()->query->get('uniqid');
+            if ($uniqid) {
+                $formData = $this->getRequest()->request->get($uniqid);
+                if (isset($formData['password']) && !$formData['password']) {
+                    unset($formData['password']);
+                    $formMapper->remove('password');
+                    $formData = $this->getRequest()->request->set($uniqid,$formData);
+                }
+            }
+        }
     }
 
     // Fields to be shown on filter forms
@@ -47,21 +63,48 @@ class EtvUserAdmin extends Admin
     
     
     public function prePersist($object) {
-        $uniqid = $this->getRequest()->query->get('uniqid');
-        $formData = $this->getRequest()->request->get($uniqid);
-        if(array_key_exists('password', $formData) && $formData['password'] !== null && strlen($formData['password']) > 0) {
-            $salt = md5(rand());
-            $object->setPassword(md5(md5($formData['password']).$salt).$salt);
-        }
+        $this->setPassword($formData);
     }
     
     public function preUpdate($object) {
-        var_dump('itt'); 
-        die();
+        $this->setPassword($object);
+    }
+    public function getExportFormats()
+    {
+        return array(
+            'csv', 'xls'
+        ); //'json', 'xml', 
+    }
+    
+    
+    protected function setPassword($object) {
         $uniqid = $this->getRequest()->query->get('uniqid');
         $formData = $this->getRequest()->request->get($uniqid);
         if(array_key_exists('password', $formData) && $formData['password'] !== null && strlen($formData['password']) > 0) {
-            $object->setPassword(sha1($formData['password']));
+            //var_dump($formData['password']);            die();
+            $salt = md5(rand());
+            $object->setPassword(md5(md5($formData['password']).$salt).$salt);
+        } else {
+            /*
+            unset($formData['password']);
+            $repository = $this->getDoctrine()->getRepository('EtvAdminBundle:EtvUser');
+            $etvUser  = $repository->find($this->getSubject()->getId());
+            var_dump($etvUser);die();*/
         }
     }
+    
+    
 }
+
+/*
+ ->add('description', 'textarea', array(
+                'label' => 'Item description',
+                'attr'  => array(
+                    'class' => 'redactor-init',
+                    'style' => 'width: 683px;'
+                )
+ ->add('visible', 'boolean', array('editable' => true))
+if ($this->admin->isGranted('LIST')) {
+    ...
+}
+ */

@@ -281,7 +281,7 @@ protected $encoderName;
         foreach ($this->userRoles->toArray() as $roleObj) {
             $roles[] = $roleObj->getRole();
         }
-        return $roles;
+        return $this->userRoles->toArray();
     }
 
     /**
@@ -339,13 +339,14 @@ protected $encoderName;
     /**
      * Add userRoles
      *
-     * @param \Etv\AdminBundle\Entity\Role $userRoles
+     * @param \Etv\AdminBundle\Entity\AdminRole $userRoles
      *
      * @return AdminUser
      */
-    public function addUserRole(\Etv\AdminBundle\Entity\Role $userRoles)
+    public function addUserRole(\Etv\AdminBundle\Entity\AdminRole $userRole)
     {
-        $this->userRoles[] = $userRoles;
+        $userRole->addUser($this);
+        $this->userRoles[] = $userRole;
 
         return $this;
     }
@@ -353,9 +354,9 @@ protected $encoderName;
     /**
      * Remove userRoles
      *
-     * @param \Etv\AdminBundle\Entity\Role $userRoles
+     * @param \Etv\AdminBundle\Entity\AdminRole $userRoles
      */
-    public function removeUserRole(\Etv\AdminBundle\Entity\Role $userRoles)
+    public function removeUserRole(\Etv\AdminBundle\Entity\AdminRole $userRoles)
     {
         $this->userRoles->removeElement($userRoles);
     }

@@ -10,19 +10,37 @@ use Sonata\AdminBundle\Form\FormMapper;
 class AdminUser extends Admin
 {
     // Fields to be shown on create/edit forms
+    public function getNewInstance()
+    {
+      $user = parent::getNewInstance();
+      // provide a default date/time of now.
+      
+      //$user->setRoles( new \DateTime( 'now' ) );
+      return $user;
+    }
+    
     protected function configureFormFields(FormMapper $formMapper)
     {
         $edit = false;
         if ($this->getSubject()->getId() > 0) {
              $edit = true;
         }
+        
         $formMapper
             ->add('username', 'text', array('label' => 'User name'))
             ->add('firstName', 'text', array('label' => 'First name'))
             ->add('lastName', 'text', array('label' => 'Last name'))
             ->add('email', 'text', array('label' => 'E-mail'))
-            ->add('password', 'password', array('label' => 'Password', 'required' => ($edit) ? false : true))
             ->add('active', 'checkbox', array('label' => 'Is active?', 'required' => false))
+            //->add('roles','sonata_type_collection' , array('label' => 'Choice', 'required' => false))
+            ->add('roles', 'entity', array('label' => 'Roles',
+                'class' => 'EtvAdminBundle:AdminRole', 
+                'property' => 'name', 
+                'multiple' => true, 
+                'by_reference' => false,
+                //'expanded'=>true,
+                'required' => false))
+            ->add('password', 'password', array('label' => 'Password', 'required' => ($edit) ? false : true))    
         ;
         if ($edit) {
             $uniqid = $this->getRequest()->query->get('uniqid');
@@ -36,6 +54,8 @@ class AdminUser extends Admin
             }
         }
     }
+    
+   
     // Fields to be shown on filter forms
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
@@ -56,6 +76,7 @@ class AdminUser extends Admin
             ->add('lastName')
             ->add('email')
             ->add('active')
+            
             //->add('created_at','datetime')
            // ->add('modify_at','datetime')
            ;

@@ -2,19 +2,22 @@
 
 namespace Etv\AdminBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
- * @ORM\Entity
- * @ORM\Table(name="etv_user")
+ * @ORM\Entity(repositoryClass="Etv\AdminBundle\Repository\AdminUserRepository")
+ * @ORM\Table(name="admin_user")
  */
-class User
+class AdminUser implements UserInterface, \Serializable
 {
 
 /**
-* @ORM\Column(type="integer")
+* @ORM\Column(name="id", type="integer")
 * @ORM\Id
 * @ORM\GeneratedValue(strategy="AUTO")
 */
-    protected $id = null;
+ protected $id = null;
 
 /**
  * @ORM\Column(type="string", length=32, unique=true, nullable=false)
@@ -52,10 +55,23 @@ class User
     protected $password;
 
 /**
- * @ORM\Column(type="string", length=255, nullable=false)
+* @ORM\ManyToMany(targetEntity="AdminRole", inversedBy="users")
+* @ORM\JoinTable(name="admin_roles")
+*/
+    private $userRoles;
+
+/**
+ * @var string $salt
+ *
+ * @ORM\Column(type="string", length=40, nullable=true)
+ */    
+private $salt;
+
+/**
+ * @ORM\Column(type="string", length=255, nullable=true)
  */
-    protected $roles;
     
+protected $encoderName;
     
     public function __toString() {
         return $this->getFullname();
@@ -261,7 +277,11 @@ class User
      */
     public function getRoles()
     {
-        return $this->roles;
+        $roles = array();
+        foreach ($this->userRoles->toArray() as $roleObj) {
+            $roles[] = $roleObj->getRole();
+        }
+        return $roles;
     }
 
     /**
@@ -273,7 +293,116 @@ class User
      */
     public function setRoles($roles)
     {
-        $this->roles = $roles;
+        $this->userRoles = $roles;
+
+        return $this;
+    }
+    
+    public function eraseCredentials()
+    {
+    }
+
+    /**
+     * Set encoderName
+     *
+     * @param string $encoderName
+     *
+     * @return AdminUser
+     */
+    public function setEncoderName($encoderName)
+    {
+        $this->encoderName = $encoderName;
+
+        return $this;
+    }
+
+    /**
+     * Get encoderName
+     *
+     * @return string 
+     */
+    public function getEncoderName()
+    {
+        return $this->encoderName;
+    }
+    
+    
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->userRoles =  new ArrayCollection();
+    }
+
+    /**
+     * Add userRoles
+     *
+     * @param \Etv\AdminBundle\Entity\Role $userRoles
+     *
+     * @return AdminUser
+     */
+    public function addUserRole(\Etv\AdminBundle\Entity\Role $userRoles)
+    {
+        $this->userRoles[] = $userRoles;
+
+        return $this;
+    }
+
+    /**
+     * Remove userRoles
+     *
+     * @param \Etv\AdminBundle\Entity\Role $userRoles
+     */
+    public function removeUserRole(\Etv\AdminBundle\Entity\Role $userRoles)
+    {
+        $this->userRoles->removeElement($userRoles);
+    }
+
+    /**
+     * Get userRoles
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUserRoles()
+    {
+        return $this->userRoles;
+    }
+
+    /**
+     * Serializes the content of the current User object
+     * @return string
+     */
+    public function serialize()
+    {
+        return \json_encode(
+                array($this->username, $this->password, $this->salt,
+                       $this->userRoles, $this->id));
+    }
+
+    /**
+     * Unserializes the given string in the current User object
+     * @param serialized
+     */
+    public function unserialize($serialized)
+    {
+        list($this->username, $this->password, $this->salt,
+                $this->userRoles, $this->id) = \json_decode(
+                $serialized);
+       
+    }
+
+    /**
+     * Set salt
+     *
+     * @param string $salt
+     *
+     * @return AdminUser
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
 
         return $this;
     }

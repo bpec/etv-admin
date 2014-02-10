@@ -12,18 +12,16 @@ class AdminWebserviceUserProvider implements UserProviderInterface
 {
     public function loadUserByUsername($username)
     {
-        // make a call to your webservice here
-        $userData = $todo;
+        $userData = $this->findByUsernameOrPassword($username);
+        var_dump($userData);
         // pretend it returns an array on success, false if there is no user
 
         if ($userData) {
             $password = '...';
-
-            // ...
-
+            
+            // .
             return new WebserviceUser($username, $password, $salt, $roles);
         }
-
         throw new UsernameNotFoundException(
             sprintf('Username "%s" does not exist.', $username)
         );
@@ -36,7 +34,6 @@ class AdminWebserviceUserProvider implements UserProviderInterface
                 sprintf('Instances of "%s" are not supported.', get_class($user))
             );
         }
-
         return $this->loadUserByUsername($user->getUsername());
     }
 
@@ -44,7 +41,5 @@ class AdminWebserviceUserProvider implements UserProviderInterface
     {
         return $class === 'Etv\AdminBundle\Security\User\WebserviceUser';
     }
-    
-    
-    
+
 }

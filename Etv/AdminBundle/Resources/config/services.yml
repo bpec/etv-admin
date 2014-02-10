@@ -1,6 +1,10 @@
 parameters:
-    webservice_admin_user_provider.class: Etv\AdminBundle\Security\User\AdminWebserviceUserProvider
+#    webservice_admin_user_provider.class: Etv\AdminBundle\Security\AdminWebserviceUserProvider
 
 services:
-    webservice_user_provider:
-        class: "%webservice_admin_user_provider.class%"
+    etv.admin.etvpw_encoder: 
+        class: Etv\AdminBundle\Service\EtvPw
+#    webservice_admin_user_provider:
+#        class: "%webservice_admin_user_provider.class%"
+#        arguments: 
+#            - Doctrine

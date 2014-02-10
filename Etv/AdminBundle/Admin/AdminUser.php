@@ -1,5 +1,5 @@
 <?php
-// vendor/etv/admin-bundle/Etv/AdminBundle/Admin/UserAdmin.php
+// vendor/etv/admin-bundle/Etv/AdminBundle/Admin/AdminUser.php
 
 namespace Etv\AdminBundle\Admin;
 use Sonata\AdminBundle\Admin\Admin;
@@ -7,7 +7,7 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
-class UserAdmin extends Admin
+class AdminUser extends Admin
 {
     // Fields to be shown on create/edit forms
     protected function configureFormFields(FormMapper $formMapper)
@@ -28,15 +28,14 @@ class UserAdmin extends Admin
             $uniqid = $this->getRequest()->query->get('uniqid');
             if ($uniqid) {
                 $formData = $this->getRequest()->request->get($uniqid);
-                if (isset($formData['password']) && !$formData['password']) {
+                if ($formData && isset($formData['password']) && !$formData['password']) {
                     unset($formData['password']);
                     $formMapper->remove('password');
-                    $formData = $this->getRequest()->request->set($uniqid,$formData);
+                    $formData = $this->getRequest()->request->set($uniqid, $formData);
                 }
             }
         }
     }
-
     // Fields to be shown on filter forms
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
@@ -64,7 +63,7 @@ class UserAdmin extends Admin
     
     
     public function prePersist($object) {
-        $this->setPassword($formData);
+        $this->setPassword($object);
     }
     
     public function preUpdate($object) {
@@ -81,9 +80,14 @@ class UserAdmin extends Admin
     protected function setPassword($object) {
         $uniqid = $this->getRequest()->query->get('uniqid');
         $formData = $this->getRequest()->request->get($uniqid);
-        if(array_key_exists('password', $formData) && $formData['password'] !== null && strlen($formData['password']) > 0) {
+        if($formData && array_key_exists('password', $formData) && $formData['password'] !== null && strlen($formData['password']) > 0) {
             $salt = md5(rand());
-            $object->setPassword(md5(md5($formData['password']).$salt).$salt);
+            $encoderService = $this->getConfigurationPool()->getContainer()->get('etv.admin.etvpw_encoder');
+           // var_dump($encoderService); die();
+           // $encoder = ->getEncoder($object);
+            $password = $encoderService->encodePassword($formData['password'], $salt);
+            $object->setPassword($password);
+            //$object->setPassword(md5(md5($formData['password']).$salt).$salt);
         }
     }
     

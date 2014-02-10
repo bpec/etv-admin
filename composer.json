@@ -12,6 +12,7 @@
         "symfony/framework-bundle": ">=2.0.0",
         "sonata-project/admin-bundle" : "*",
         "doctrine/doctrine-migrations-bundle": "dev-master",
+        "doctrine/data-fixtures" : "dev-master",
         "gedmo/doctrine-extensions": "dev-master",
         "stof/doctrine-extensions-bundle": "dev-master",
         "sonata-project/doctrine-orm-admin-bundle" : "dev-master"

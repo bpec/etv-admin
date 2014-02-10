@@ -56,7 +56,7 @@ class AdminUser implements UserInterface, \Serializable
 
 /**
 * @ORM\ManyToMany(targetEntity="AdminRole", inversedBy="users")
-* @ORM\JoinTable(name="admin_roles")
+* @ORM\JoinTable(name="admin_user_role")
 */
     private $userRoles;
 

@@ -25,9 +25,8 @@ class EtvUser extends Admin
             ->add('email', 'text', array('label' => 'E-mail'))
             ->add('active', 'checkbox', array('label' => 'Is active?', 'required' => false))
             ->add('password', 'password', array('label' => 'Password', 'required' => ($edit) ? false : true))
-            ->add('nationality', 'country', array('label' => 'Nationality'))
+            ->add('nationality', 'country', array('label' => 'Nationality'));
             
-        ;
         if ($edit) {
             $uniqid = $this->getRequest()->query->get('uniqid');
             if ($uniqid) {
@@ -50,7 +49,22 @@ class EtvUser extends Admin
             ->add('firstName')
             ->add('lastName')
             ->add('email')
-            ->add('nationality')
+         //   ->add('nationality')
+            /*->add('nationality', 'doctrine_orm_callback', array(
+//                'callback'   => array($this, 'getWithOpenCommentFilter'),
+                'callback' => function($queryBuilder, $alias, $field, $value) {
+                    if (!$value) {
+                        return;
+                    }
+
+                    $queryBuilder->leftJoin(sprintf('%s.comments', $alias), 'c');
+                    $queryBuilder->andWhere('c.status = :status');
+                    $queryBuilder->setParameter('status', Comment::STATUS_MODERATE);
+
+                    return true;
+                },
+                'field_type' => 'checkbox'
+            ));*/
         ;
     }
 
@@ -63,7 +77,7 @@ class EtvUser extends Admin
             ->add('lastName')
             ->add('email')
             ->add('active')
-            ->add('nationality')
+            ->add('nationality','string', array('template' => 'EtvAdminBundle:Components:country.html.twig'))
             
             //->add('created_at','datetime')
            // ->add('modify_at','datetime')

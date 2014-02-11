@@ -26,7 +26,7 @@ class LoadEtvUserData extends AbstractFixture implements OrderedFixtureInterface
     {
         $users = array(
             //'username' => array(firstname,lastname,dateofbirth, active, email, password),
-            'johnsmith' => array('john','smith', '1987-12-11', 1, 'johnsmith@gmail.hu', 'smith')
+            'johnsmith' => array('john','smith', '1987-12-11', 1, 'johnsmith@gmail.hu', 'smith', 'GB')
         );
         
         foreach ($users as $userName => $userData) {
@@ -44,6 +44,8 @@ class LoadEtvUserData extends AbstractFixture implements OrderedFixtureInterface
             $encoderService = $this->container->get('security.encoder_factory')->getEncoder($user);
             $password = $encoderService->encodePassword($userData[5], $salt);
             $user->setPassword($password);
+            
+            $user->setCountry($userData[6]);
             
             $manager->persist($user);
             $manager->flush();

@@ -8,3 +8,7 @@ services:
 #        class: "%webservice_admin_user_provider.class%"
 #        arguments: 
 #            - Doctrine
+    etv.twig.country_extension:
+            class: Etv\AdminBundle\Twig\CountryExtension
+            tags:
+                - { name: twig.extension }

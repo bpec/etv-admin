@@ -23,7 +23,6 @@ class AdminUser extends Admin
             ->add('lastName', 'text', array('label' => 'Last name'))
             ->add('email', 'text', array('label' => 'E-mail'))
             ->add('active', 'checkbox', array('label' => 'Is active?', 'required' => false))
-            //->add('roles','sonata_type_collection' , array('label' => 'Choice', 'required' => false))
             ->add('roles', 'entity', array('label' => 'Roles',
                 'class' => 'EtvAdminBundle:AdminRole', 
                 'property' => 'name', 

@@ -1,5 +1,5 @@
 <?php
-// vendor/etv/admin-bundle/Etv/AdminBundle/Admin/AdminUser.php
+// vendor/etv/admin-bundle/Etv/AdminBundle/Admin/EtvUser.php
 
 namespace Etv\AdminBundle\Admin;
 use Sonata\AdminBundle\Admin\Admin;
@@ -7,9 +7,10 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
-class AdminUser extends Admin
+class EtvUser extends Admin
 {
 
+    
     protected function configureFormFields(FormMapper $formMapper)
     {
         $edit = false;
@@ -23,15 +24,9 @@ class AdminUser extends Admin
             ->add('lastName', 'text', array('label' => 'Last name'))
             ->add('email', 'text', array('label' => 'E-mail'))
             ->add('active', 'checkbox', array('label' => 'Is active?', 'required' => false))
-            //->add('roles','sonata_type_collection' , array('label' => 'Choice', 'required' => false))
-            ->add('roles', 'entity', array('label' => 'Roles',
-                'class' => 'EtvAdminBundle:AdminRole', 
-                'property' => 'name', 
-                'multiple' => true, 
-                'by_reference' => false,
-                //'expanded'=>true,
-                'required' => false))
-            ->add('password', 'password', array('label' => 'Password', 'required' => ($edit) ? false : true))    
+            ->add('password', 'password', array('label' => 'Password', 'required' => ($edit) ? false : true))
+            ->add('nationality', 'country', array('label' => 'Nationality'))
+            
         ;
         if ($edit) {
             $uniqid = $this->getRequest()->query->get('uniqid');
@@ -55,6 +50,7 @@ class AdminUser extends Admin
             ->add('firstName')
             ->add('lastName')
             ->add('email')
+            ->add('nationality')
         ;
     }
 
@@ -67,6 +63,7 @@ class AdminUser extends Admin
             ->add('lastName')
             ->add('email')
             ->add('active')
+            ->add('nationality')
             
             //->add('created_at','datetime')
            // ->add('modify_at','datetime')
@@ -95,11 +92,8 @@ class AdminUser extends Admin
         if($formData && array_key_exists('password', $formData) && $formData['password'] !== null && strlen($formData['password']) > 0) {
             $salt = md5(rand());
             $encoderService = $this->getConfigurationPool()->getContainer()->get('etv.admin.etvpw_encoder');
-           // var_dump($encoderService); die();
-           // $encoder = ->getEncoder($object);
             $password = $encoderService->encodePassword($formData['password'], $salt);
             $object->setPassword($password);
-            //$object->setPassword(md5(md5($formData['password']).$salt).$salt);
         }
     }
     

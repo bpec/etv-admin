@@ -25,12 +25,12 @@ class AdminUser implements UserInterface, \Serializable
     protected $username;
 
 /**
- * @ORM\Column(type="string", length=32, unique=true, nullable=false)
+ * @ORM\Column(type="string", length=32, nullable=false)
  */
     protected $firstName;
 
 /**
- * @ORM\Column(type="string", length=32, unique=true, nullable=false)
+ * @ORM\Column(type="string", length=32, nullable=false)
  */
     protected $lastName;
 

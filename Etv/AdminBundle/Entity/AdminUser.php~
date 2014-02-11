@@ -25,12 +25,12 @@ class AdminUser implements UserInterface, \Serializable
     protected $username;
 
 /**
- * @ORM\Column(type="string", length=32, unique=true, nullable=false)
+ * @ORM\Column(type="string", length=32, nullable=false)
  */
     protected $firstName;
 
 /**
- * @ORM\Column(type="string", length=32, unique=true, nullable=false)
+ * @ORM\Column(type="string", length=32, nullable=false)
  */
     protected $lastName;
 
@@ -56,7 +56,7 @@ class AdminUser implements UserInterface, \Serializable
 
 /**
 * @ORM\ManyToMany(targetEntity="AdminRole", inversedBy="users")
-* @ORM\JoinTable(name="admin_roles")
+* @ORM\JoinTable(name="admin_user_role")
 */
     private $userRoles;
 
@@ -281,7 +281,7 @@ protected $encoderName;
         foreach ($this->userRoles->toArray() as $roleObj) {
             $roles[] = $roleObj->getRole();
         }
-        return $roles;
+        return $this->userRoles->toArray();
     }
 
     /**
@@ -339,13 +339,14 @@ protected $encoderName;
     /**
      * Add userRoles
      *
-     * @param \Etv\AdminBundle\Entity\Role $userRoles
+     * @param \Etv\AdminBundle\Entity\AdminRole $userRoles
      *
      * @return AdminUser
      */
-    public function addUserRole(\Etv\AdminBundle\Entity\Role $userRoles)
+    public function addUserRole(\Etv\AdminBundle\Entity\AdminRole $userRole)
     {
-        $this->userRoles[] = $userRoles;
+        $userRole->addUser($this);
+        $this->userRoles[] = $userRole;
 
         return $this;
     }
@@ -353,9 +354,9 @@ protected $encoderName;
     /**
      * Remove userRoles
      *
-     * @param \Etv\AdminBundle\Entity\Role $userRoles
+     * @param \Etv\AdminBundle\Entity\AdminRole $userRoles
      */
-    public function removeUserRole(\Etv\AdminBundle\Entity\Role $userRoles)
+    public function removeUserRole(\Etv\AdminBundle\Entity\AdminRole $userRoles)
     {
         $this->userRoles->removeElement($userRoles);
     }

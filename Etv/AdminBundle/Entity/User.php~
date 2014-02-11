@@ -3,53 +3,21 @@
 namespace Etv\AdminBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\EquatableInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="etv_user")
+ * @ORM\Entity(repositoryClass="Etv\AdminBundle\Repository\UserRepository")
+ * @ORM\Table(name="user")
  */
-class User implements UserInterface, EquatableInterface
+class User implements UserInterface, \Serializable
 {
 
-    public function __construct($username, $password, $salt, array $roles)
-    {
-        $this->username = $username;
-        $this->password = $password;
-        $this->salt = $salt;
-        $this->roles = $roles;
-    }   
-    
-    public function eraseCredentials()
-    {
-    }
-    
-    public function isEqualTo(UserInterface $user)
-    {
-        if (!$user instanceof WebserviceUser) {
-            return false;
-        }
-
-        if ($this->password !== $user->getPassword()) {
-            return false;
-        }
-
-        if ($this->getSalt() !== $user->getSalt()) {
-            return false;
-        }
-
-        if ($this->username !== $user->getUsername()) {
-            return false;
-        }
-
-        return true;
-    }
 /**
-* @ORM\Column(type="integer")
+* @ORM\Column(name="id", type="integer")
 * @ORM\Id
 * @ORM\GeneratedValue(strategy="AUTO")
 */
-    protected $id = null;
+ protected $id = null;
 
 /**
  * @ORM\Column(type="string", length=32, unique=true, nullable=false)
@@ -57,12 +25,12 @@ class User implements UserInterface, EquatableInterface
     protected $username;
 
 /**
- * @ORM\Column(type="string", length=32, unique=true, nullable=false)
+ * @ORM\Column(type="string", length=32, nullable=false)
  */
     protected $firstName;
 
 /**
- * @ORM\Column(type="string", length=32, unique=true, nullable=false)
+ * @ORM\Column(type="string", length=32, nullable=false)
  */
     protected $lastName;
 
@@ -85,13 +53,98 @@ class User implements UserInterface, EquatableInterface
  * @ORM\Column(type="string", length=255, nullable=false)
  */
     protected $password;
+    
+/**
+ * @ORM\Column(type="string", length=2, nullable=true)
+ */
+    protected $nationality;
 
 /**
- * @ORM\Column(type="string", length=255, nullable=false)
+ * @ORM\Column(type="smallint", nullable=true)
  */
-    protected $roles;
+    protected $sex;
+
+/**
+ * @ORM\Column(type="boolean", nullable=true)
+ */
+    protected $is_ext_skipper;
+
+ /**
+ * @ORM\Column(type="boolean", nullable=true)
+ */
+    protected $is_hostess;
     
+/**
+ * @ORM\Column(type="boolean", nullable=true)
+ */
+    protected $is_intern;
+/**
+ * @ORM\Column(type="string", length=50, nullable=false)
+ */
+    protected $phone;
+
+/**
+ * @ORM\Column(type="string", length=50, nullable=false)
+ */
+    protected $address;
+
+/**
+ * @ORM\Column(type="string", length=50, nullable=false)
+ */
+    protected $city;
+
+/**
+ * @ORM\Column(type="string", length=50, nullable=false)
+ */
+    protected $zip;
+/**
+ * @ORM\Column(type="string", length=50, nullable=false)
+ */
+    protected $country;
+/**
+ * @ORM\Column(type="text", nullable=false)
+ */
+    protected $comments;
+/**
+ * @ORM\Column(type="text",nullable=false)
+ */
+    protected $flight_details;
+/**
+ * @ORM\Column(type="smallint", nullable=false)
+ */
+    protected $year;    
+/**
+ * @ORM\Column(type="bigint", nullable=false)
+ */
+    protected $fbUID;    
+
+/**
+* @ORM\ManyToMany(targetEntity="UserRole", inversedBy="users")
+* @ORM\JoinTable(name="user_role")
+*/
+    private $userRoles;
+
+/**
+ * @var string $salt
+ *
+ * @ORM\Column(type="string", length=40, nullable=true)
+ */    
+private $salt;
+
+/**
+ * @ORM\Column(type="string", length=255, nullable=true)
+ */
     
+protected $encoderName;
+    
+    public function __toString() {
+        return $this->getFullname();
+    }
+
+    public function getFullname(){
+        return $this->getFirstName().' '.$this->getLastName();
+    }
+
     /**
      * Get id
      *
@@ -288,9 +341,12 @@ class User implements UserInterface, EquatableInterface
      */
     public function getRoles()
     {
-        return $this->roles;
+        $roles = array();
+        foreach ($this->userRoles->toArray() as $roleObj) {
+            $roles[] = $roleObj->getRole();
+        }
+        return $this->userRoles->toArray();
     }
-    
 
     /**
      * Set roles
@@ -301,7 +357,117 @@ class User implements UserInterface, EquatableInterface
      */
     public function setRoles($roles)
     {
-        $this->roles = $roles;
+        $this->userRoles = $roles;
+
+        return $this;
+    }
+    
+    public function eraseCredentials()
+    {
+    }
+
+    /**
+     * Set encoderName
+     *
+     * @param string $encoderName
+     *
+     * @return AdminUser
+     */
+    public function setEncoderName($encoderName)
+    {
+        $this->encoderName = $encoderName;
+
+        return $this;
+    }
+
+    /**
+     * Get encoderName
+     *
+     * @return string 
+     */
+    public function getEncoderName()
+    {
+        return $this->encoderName;
+    }
+    
+    
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->userRoles =  new ArrayCollection();
+    }
+
+    /**
+     * Add userRoles
+     *
+     * @param \Etv\AdminBundle\Entity\AdminRole $userRoles
+     *
+     * @return AdminUser
+     */
+    public function addUserRole(\Etv\AdminBundle\Entity\AdminRole $userRole)
+    {
+        $userRole->addUser($this);
+        $this->userRoles[] = $userRole;
+
+        return $this;
+    }
+
+    /**
+     * Remove userRoles
+     *
+     * @param \Etv\AdminBundle\Entity\AdminRole $userRoles
+     */
+    public function removeUserRole(\Etv\AdminBundle\Entity\AdminRole $userRoles)
+    {
+        $this->userRoles->removeElement($userRoles);
+    }
+
+    /**
+     * Get userRoles
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUserRoles()
+    {
+        return $this->userRoles;
+    }
+
+    /**
+     * Serializes the content of the current User object
+     * @return string
+     */
+    public function serialize()
+    {
+        return \json_encode(
+                array($this->username, $this->password, $this->salt,
+                       $this->userRoles, $this->id));
+    }
+
+    /**
+     * Unserializes the given string in the current User object
+     * @param serialized
+     */
+    public function unserialize($serialized)
+    {
+        list($this->username, $this->password, $this->salt,
+                $this->userRoles, $this->id) = \json_decode(
+                $serialized);
+       
+    }
+
+    /**
+     * Set salt
+     *
+     * @param string $salt
+     *
+     * @return AdminUser
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
 
         return $this;
     }
